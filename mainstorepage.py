@@ -80,6 +80,7 @@ if(response.status_code != 200):
     exit()
 
 soup = BeautifulSoup(response.text, 'lxml')
+
 links = []
 all_products = soup.find('div', class_="s-main-slot s-result-list s-search-results sg-row")
 for tag in soup.find_all('data-component-type="s-search-result"'):
