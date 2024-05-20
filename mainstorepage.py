@@ -72,6 +72,7 @@ custom_headers = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0',
     'accept-language': 'en-US,en;q=0.5',
 }
+
 # webpage request
 response = requests.get(category_url, headers= custom_headers)
 if(response.status_code != 200):

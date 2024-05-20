@@ -155,7 +155,7 @@ class PageScrap:
                 rank_number = seller_rank_text[rank_index + 1:space_index]
                 rank_number = rank_number.replace(",", "")
 
-        #product description
+        #product description 
         description_element = soup.find('div', id='productFactsDesktopExpander')
         if description_element: 
             description = description_element.text.strip()
