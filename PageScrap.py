@@ -189,5 +189,6 @@ class PageScrap:
         # convert dict to json
         json_str = json.dumps(product_info)
 
+        return json_str
         # with open("product_info.json", "w") as outfile:
         # outfile.write(json_str)
