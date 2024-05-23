@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import base64
 
 import re
 import json
@@ -192,7 +193,9 @@ class PageScrap:
         image_element = soup.select_one("#landingImage")
         first_image = image_element.attrs.get("src")
 
-        result = requests.get(first_image)
+        image_result = requests.get(first_image)
+
+        image_b64 = base64.b64encode(image_result.content)
 
         # convert all info to dictionary
         product_info = {
@@ -211,7 +214,7 @@ class PageScrap:
             "date_first_available": date_first_available,
             "rank_number": rank_number,
             "description": description,
-            "first_image": result,
+            "first_image": image_b64.decode("utf-8"),
         }
 
         # convert dict to json
