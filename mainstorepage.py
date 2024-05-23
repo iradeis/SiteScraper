@@ -142,7 +142,6 @@ class MainStorePage:
         sc = PageScrap()
         single_url = urls[0]
         print(single_url)
-        return
         jsonstr = sc.scrape_site(single_url)
         print(jsonstr)
         """
