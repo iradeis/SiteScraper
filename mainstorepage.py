@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 import re
+import json
 
 from PageScrap import PageScrap
 import asyncio
@@ -100,7 +101,7 @@ class MainStorePage:
             try:
                 # Use the 'static_connection' method to download the HTML content of the search results bage
                 custom_headers = {
-                    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+                    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0",
                     "accept-language": "en-US,en;q=0.5",
                 }
                 # webpage request
@@ -111,6 +112,7 @@ class MainStorePage:
 
                 soup = BeautifulSoup(response.text, "lxml")
 
+                test = soup.find('div', class_="a-section a-spacing-small a-spacing-top-small")
                 # Check if main content element exists on page:
                 try:
                     soup.select_one(self.main_content)
@@ -140,14 +142,11 @@ class MainStorePage:
             print("no links found")  # Print the error message
             return
         sc = PageScrap()
-        single_url = urls[0]
-        print(single_url)
-        jsonstr = sc.scrape_site(single_url)
-        print(jsonstr)
-        """
         for link in urls:
+            print(link)
             jsonstr = sc.scrape_site(link)
-        """
+            #j = json.loads(jsonstr)
+            #print(j['url'])
 
 
 terms = "running shoes"

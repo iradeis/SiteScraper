@@ -6,29 +6,60 @@ import base64
 import re
 import json
 
+from parsel import Selector
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+
+from selenium.webdriver.support.ui import WebDriverWait as wait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+from fake_useragent import UserAgent
 
 class PageScrap:
     def is_printable_ascii(self, char):
         """Checks if a character is a printable ASCII character."""
         return 32 <= ord(char) <= 126
-
+    
     # takes url, returns json
     def scrape_site(self, url):
+
+        #selenium loading 
+        options = Options()
+        options.add_argument("--headless=new")
+        options.add_argument('--user-agent="Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; Microsoft; Lumia 640 XL LTE) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Mobile Safari/537.36 Edge/12.10166"')
+        options.add_argument("--window-size=1920,1080")  # set window size to native GUI size
+        options.add_argument("start-maximized")  # ensure window is full-screen
+        
+        driver = webdriver.Chrome(options=options)
+        
+        driver.get(url)
+        driver.implicitly_wait(50)
+        rawHtml = driver.page_source
+        driver.close()
+
+        '''
         custom_headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
             "accept-language": "en-US,en;q=0.5",
         }
-
         # webpage request
         response = requests.get(url, headers=custom_headers)
         if response.status_code != 200:
             print("Cannot access")
             exit()
+        '''
 
-        soup = BeautifulSoup(response.text, "lxml")
+        soup = BeautifulSoup(rawHtml, "lxml")
+        for span in soup.find('span'):
+            print(span)
 
         # product name
-        title_element = soup.select_one("#productTitle")
+        title_element = soup.find('span', id='productTitle')
         product_name = title_element.text.strip()
 
         # brand
@@ -38,13 +69,14 @@ class PageScrap:
             brand_name = re.sub(r"Visit|the|Store|Brand:", "", brand_text).strip()
         else:
             brand_name = "None"
+        print(brand_name)
 
         # look at price using span.a-offscreen
-        price_element = soup.find(
-            "span",
-            class_="a-price aok-align-center reinventPricePriceToPayMargin priceToPay",
-        )
-        price = float(price_element.text.strip()[1:])
+        price_element = soup.find('span', class_="a-price aok-align-center reinventPricePriceToPayMargin priceToPay")
+        if not price_element: price_element = soup.find("span", class_="a-price-range")
+        if price_element: price = float(price_element.text.strip()[1:])
+        
+        print(price)
 
         # discount
         discount_element = soup.find(
@@ -214,7 +246,7 @@ class PageScrap:
             "date_first_available": date_first_available,
             "rank_number": rank_number,
             "description": description,
-            "first_image": image_b64.decode("utf-8"),
+            "first_image": image_b64.decode("utf-8")
         }
 
         # convert dict to json
@@ -223,3 +255,7 @@ class PageScrap:
         return json_str
         # with open("product_info.json", "w") as outfile:
         # outfile.write(json_str)
+
+url = 'https://www.amazon.com/New-Balance-Running-Aluminum-Metallic/dp/B09H3N5J27/'
+ps = PageScrap()
+ps.scrape_site(url)
