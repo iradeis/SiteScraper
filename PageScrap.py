@@ -27,7 +27,8 @@ class PageScrap:
     
     # takes url, returns json
     def scrape_site(self, url):
-
+        
+        '''
         #selenium loading 
         options = Options()
         options.add_argument("--headless=new")
@@ -41,7 +42,7 @@ class PageScrap:
         driver.implicitly_wait(50)
         rawHtml = driver.page_source
         driver.close()
-
+        '''
         '''
         custom_headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
@@ -53,10 +54,9 @@ class PageScrap:
             print("Cannot access")
             exit()
         '''
-
-        soup = BeautifulSoup(rawHtml, "lxml")
-        for span in soup.find('span'):
-            print(span)
+        with open('raw_html.txt', "r", encoding='utf-8') as f:
+            content = f.read()
+        soup = BeautifulSoup(content, "lxml")
 
         # product name
         title_element = soup.find('span', id='productTitle')
