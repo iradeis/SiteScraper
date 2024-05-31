@@ -59,8 +59,8 @@ class PageScrap:
         soup = BeautifulSoup(content, "lxml")
 
         # product name
-        title_element = soup.find('span', id='productTitle')
-        product_name = title_element.text.strip()
+        title_element = soup.find('span', id='title')
+        #product_name = title_element.text.strip()
 
         # brand
         brand_element = soup.find("a", id="bylineInfo")
