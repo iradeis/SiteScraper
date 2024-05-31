@@ -28,10 +28,10 @@ class PageScrap:
     # takes url, returns json
     def scrape_site(self, url):
         
-        '''
+        
         #selenium loading 
         options = Options()
-        options.add_argument("--headless=new")
+        #options.add_argument("--headless=new")
         options.add_argument('--user-agent="Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; Microsoft; Lumia 640 XL LTE) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Mobile Safari/537.36 Edge/12.10166"')
         options.add_argument("--window-size=1920,1080")  # set window size to native GUI size
         options.add_argument("start-maximized")  # ensure window is full-screen
@@ -39,10 +39,10 @@ class PageScrap:
         driver = webdriver.Chrome(options=options)
         
         driver.get(url)
-        driver.implicitly_wait(50)
+        driver.implicitly_wait(500000000)
         rawHtml = driver.page_source
-        driver.close()
-        '''
+        # driver.close()
+        
         '''
         custom_headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
@@ -54,13 +54,15 @@ class PageScrap:
             print("Cannot access")
             exit()
         '''
+        quit()
         with open('raw_html.txt', "r", encoding='utf-8') as f:
             content = f.read()
         soup = BeautifulSoup(content, "lxml")
 
         # product name
         title_element = soup.find('span', id='title')
-        #product_name = title_element.text.strip()
+        product_name = title_element.text.strip()
+        print(product_name)
 
         # brand
         brand_element = soup.find("a", id="bylineInfo")
@@ -71,10 +73,16 @@ class PageScrap:
             brand_name = "None"
         print(brand_name)
 
-        # look at price using span.a-offscreen
+        # look at price
         price_element = soup.find('span', class_="a-price aok-align-center reinventPricePriceToPayMargin priceToPay")
         if not price_element: price_element = soup.find("span", class_="a-price-range")
-        if price_element: price = float(price_element.text.strip()[1:])
+        if price_element:
+            parts = price_element.split("$")
+            if len(parts) < 2:
+                price = None
+            else:
+                price = parts[-1].strip()
+            price = float(price)
         
         print(price)
 
@@ -86,6 +94,7 @@ class PageScrap:
         discount = discount_element.text.strip() if discount_element else ""
         discount = discount[1:-1] if discount else 0
         discount_percent = int(discount)
+        print(discount_percent)
 
         # avg rating
         rating_element = soup.select_one("#acrPopover")
