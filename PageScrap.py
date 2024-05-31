@@ -28,21 +28,23 @@ class PageScrap:
     # takes url, returns json
     def scrape_site(self, url):
         
-        
+        '''
         #selenium loading 
         options = Options()
-        #options.add_argument("--headless=new")
-        options.add_argument('--user-agent="Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; Microsoft; Lumia 640 XL LTE) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Mobile Safari/537.36 Edge/12.10166"')
+        options.add_argument("--headless=new")
+        #options.add_experimental_option("detach", True)
+        
+        options.add_argument('--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.3"')
         options.add_argument("--window-size=1920,1080")  # set window size to native GUI size
         options.add_argument("start-maximized")  # ensure window is full-screen
         
         driver = webdriver.Chrome(options=options)
         
         driver.get(url)
-        driver.implicitly_wait(500000000)
+        driver.implicitly_wait(50)
         rawHtml = driver.page_source
-        # driver.close()
-        
+        driver.close()
+        '''
         '''
         custom_headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
@@ -53,14 +55,19 @@ class PageScrap:
         if response.status_code != 200:
             print("Cannot access")
             exit()
+
+        filename = "raw_html.txt"
+
+        with open(filename, "w", encoding='utf-8') as f:
+            f.write(rawHtml)
         '''
-        quit()
+
         with open('raw_html.txt', "r", encoding='utf-8') as f:
             content = f.read()
         soup = BeautifulSoup(content, "lxml")
 
         # product name
-        title_element = soup.find('span', id='title')
+        title_element = soup.find('span', id='productTitle')
         product_name = title_element.text.strip()
         print(product_name)
 
@@ -75,9 +82,10 @@ class PageScrap:
 
         # look at price
         price_element = soup.find('span', class_="a-price aok-align-center reinventPricePriceToPayMargin priceToPay")
-        if not price_element: price_element = soup.find("span", class_="a-price-range")
+        if not price_element: 
+            price_element = soup.find("span", class_="a-price-range")
         if price_element:
-            parts = price_element.split("$")
+            parts = price_element.text.split("$")
             if len(parts) < 2:
                 price = None
             else:
@@ -97,16 +105,18 @@ class PageScrap:
         print(discount_percent)
 
         # avg rating
-        rating_element = soup.select_one("#acrPopover")
+        rating_element = soup.find('span', id="acrPopover")
         rating_text = rating_element.attrs.get("title")
         rating = rating_text.replace(" out of 5 stars", "")
         rating_avg = float(rating)
+        print(rating_avg)
 
         # number of reviews
         total_reviews_element = soup.find("a", id="acrCustomerReviewLink")
         total_reviews = total_reviews_element.text.strip()
         temp = "".join(char for char in total_reviews if char.isdigit())
         total_reviews = int(temp)
+        print(total_reviews)
 
         # rating breakdown
         rating_table = soup.find("table", id="histogramTable")
@@ -117,9 +127,12 @@ class PageScrap:
             ).find("a")
             if percentage_element:
                 rating_percent = percentage_element.text.strip()
-                rating_percent = rating_percent.replace("%", "")
+                parts = rating_percent.split(" ")
+                rating_percent = parts[0].strip()
+                rating_percent = rating_percent.replace('%', "")
                 rating_stars.append(int(rating_percent))
         rating_stars.reverse()
+        print(rating_stars)
 
         # free delivery
         free_delivery_element = soup.find(
