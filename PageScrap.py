@@ -109,14 +109,12 @@ class PageScrap:
         rating_text = rating_element.attrs.get("title")
         rating = rating_text.replace(" out of 5 stars", "")
         rating_avg = float(rating)
-        print(rating_avg)
 
         # number of reviews
         total_reviews_element = soup.find("a", id="acrCustomerReviewLink")
         total_reviews = total_reviews_element.text.strip()
         temp = "".join(char for char in total_reviews if char.isdigit())
         total_reviews = int(temp)
-        print(total_reviews)
 
         # rating breakdown
         rating_table = soup.find("table", id="histogramTable")
@@ -132,7 +130,6 @@ class PageScrap:
                 rating_percent = rating_percent.replace('%', "")
                 rating_stars.append(int(rating_percent))
         rating_stars.reverse()
-        print(rating_stars)
 
         # free delivery
         free_delivery_element = soup.find(
@@ -223,6 +220,7 @@ class PageScrap:
                             )
                         elif identifier == "ASIN":
                             asin = tokens[i + 1]
+        
 
         # rank in category
         details_list = product_details_element.find_next_sibling(
@@ -242,6 +240,7 @@ class PageScrap:
         description_element = soup.find("div", id="productFactsDesktopExpander")
         if description_element:
             description = description_element.text.strip()
+        
 
         # first image
         image_element = soup.select_one("#landingImage")
