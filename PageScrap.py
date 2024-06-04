@@ -254,6 +254,7 @@ class PageScrap:
         product_info = {
             "url": url,
             "product_name": product_name,
+            "ASIN": asin,
             "brand_name": brand_name,
             "price": price,
             "discount": discount,
@@ -272,6 +273,7 @@ class PageScrap:
 
         # convert dict to json
         json_str = json.dumps(product_info)
+        print(json_str)
 
         return json_str
         # with open("product_info.json", "w") as outfile:
