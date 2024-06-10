@@ -13,34 +13,40 @@ class DBAgent:
         #format of connectionstring mongodb://localhost:27017
         self.mongoClient = MongoClient(connectionString)
         self.db = self.mongoClient["AmazonProductResearch"]
+        self.productRawCollection = self.db["ProductRawHTML"]
         self.productInfoCollection = self.db["ProductInfo"]
         self.productReviewCollection = self.db["ProductReview"]
 
-    # write html to database, use asin as id
+    # method writes search term, raw html and asin to database
+    # input raw and asin
+    # output to database
+    def WriteRaw(self, raw):
+        inserted = self.productRawCollection.insert_one(raw)
+    
+    # method write product detail
+    # input as dict
+    # output into database
+    # uses asin as id
     def WriteProductInfo(self, json):
         insert = self.productInfoCollection.insert_one(json)
 
-    def ReadProductInfo(self, maxPrice: float, minPrice: float):
+    def ReadProductInfoByPrice(self, maxPrice: float, minPrice: float):
         filter = { 
                     'price': { '$gte': minPrice, '$lte': maxPrice } }
         cursor = self.productInfoCollection.find(filter)
 
         return list(cursor)
     
-    
-        
-    # method write product detail
-    # input as dict
-    # output into database
-    
-    # method write product review 
-    # input as dict
-    # output into database
-
     # method read
     # input as keyword (maybe product name)
     # output dict
+    def ReadProductInfo(self, ASIN):
+        return self.productInfoCollection.find_one({'ASIN': ASIN})
 
+
+    # method write product review 
+    # input as dict
+    # output into database
 
     # - product details
     # - product reviews
@@ -52,8 +58,8 @@ class DBAgent:
 
 myAgent = DBAgent("mongodb://localhost:27017")
 
-#productInfo = { "id": 1, "name": "nike 001" }
-json = {"url": "https://www.amazon.com/New-Balance-Running-Aluminum-Metallic/dp/B09H3N5J27/", 
+json = {"url": "https://www.amazon.com/New-Balance-Running-Aluminum-Metallic/dp/B09H3N5J27/",
+        "ASIN": "B09H3P7CWQ",
         "product_name": "New Balance Men's Fresh Foam Arishi V4 Running Shoe", 
         "brand_name": "New Balance", "price": 69.99, "discount": 0, 
         "rating_avg": 4.4, "total_reviews": 4088, "rating_stars": [6, 3, 7, 15, 69], 

@@ -45,7 +45,6 @@ class PageScrap:
         rawHtml = driver.page_source
         driver.close()
         '''
-        '''
         custom_headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
             "accept-language": "en-US,en;q=0.5",
@@ -56,20 +55,23 @@ class PageScrap:
             print("Cannot access")
             exit()
 
+        '''
         filename = "raw_html.txt"
 
         with open(filename, "w", encoding='utf-8') as f:
             f.write(rawHtml)
         '''
 
+        '''
         with open('raw_html.txt', "r", encoding='utf-8') as f:
             content = f.read()
         soup = BeautifulSoup(content, "lxml")
+        '''
+        soup = BeautifulSoup(response.text, "lxml")
 
         # product name
         title_element = soup.find('span', id='productTitle')
         product_name = title_element.text.strip()
-        print(product_name)
 
         # brand
         brand_element = soup.find("a", id="bylineInfo")
@@ -78,10 +80,11 @@ class PageScrap:
             brand_name = re.sub(r"Visit|the|Store|Brand:", "", brand_text).strip()
         else:
             brand_name = "None"
-        print(brand_name)
 
-        # look at price
+        # look at price                 
         price_element = soup.find('span', class_="a-price aok-align-center reinventPricePriceToPayMargin priceToPay")
+        if not price_element:
+            price_element = soup.find("span", class_="a-price a-text-price a-size-medium apexPriceToPay")
         if not price_element: 
             price_element = soup.find("span", class_="a-price-range")
         if price_element:
@@ -92,7 +95,6 @@ class PageScrap:
                 price = parts[-1].strip()
             price = float(price)
         
-        print(price)
 
         # discount
         discount_element = soup.find(
@@ -102,7 +104,6 @@ class PageScrap:
         discount = discount_element.text.strip() if discount_element else ""
         discount = discount[1:-1] if discount else 0
         discount_percent = int(discount)
-        print(discount_percent)
 
         # avg rating
         rating_element = soup.find('span', id="acrPopover")
@@ -273,12 +274,27 @@ class PageScrap:
 
         # convert dict to json
         json_str = json.dumps(product_info)
-        print(json_str)
+        #print(json_str)
 
         return json_str
         # with open("product_info.json", "w") as outfile:
         # outfile.write(json_str)
+    
+    # takes url, returns html
+    def get_html(self, url):
+        
+        custom_headers = {
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+            "accept-language": "en-US,en;q=0.5",
+        }
+        # webpage request
+        response = requests.get(url, headers=custom_headers)
+        if response.status_code != 200:
+            print("Cannot access")
+            exit()
+        
+        return response.text
 
-url = 'https://www.amazon.com/New-Balance-Running-Aluminum-Metallic/dp/B09H3N5J27/'
-ps = PageScrap()
-ps.scrape_site(url)
+#url = 'https://www.amazon.com/New-Balance-Running-Aluminum-Metallic/dp/B09H3N5J27/'
+#ps = PageScrap()
+#ps.get_html(url)
