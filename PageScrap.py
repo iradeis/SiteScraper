@@ -6,19 +6,19 @@ import base64
 import re
 import json
 
-from parsel import Selector
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+# from parsel import Selector
+# from selenium import webdriver
+# from selenium.webdriver.chrome.service import Service
+# from selenium.webdriver.chrome.options import Options
 
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.by import By
+# from webdriver_manager.chrome import ChromeDriverManager
+# from selenium.webdriver.common.by import By
 
-from selenium.webdriver.support.ui import WebDriverWait as wait
-from selenium.webdriver.support import expected_conditions as EC
-import time
+# from selenium.webdriver.support.ui import WebDriverWait as wait
+# from selenium.webdriver.support import expected_conditions as EC
+# import time
 
-from fake_useragent import UserAgent
+# from fake_useragent import UserAgent
 
 class PageScrap:
     def is_printable_ascii(self, char):
