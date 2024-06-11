@@ -3,9 +3,6 @@
 import pymongo
 from pymongo import MongoClient
 
-
-
-
 class DBAgent:
 
     def __init__(self, connectionString: str):
