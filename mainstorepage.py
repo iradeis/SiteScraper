@@ -4,11 +4,12 @@ import pandas as pd
 
 import re
 import json
+import time
 
 from PageScrap import PageScrap
 import asyncio
 
-from DBAgent import DBAgent
+# from DBAgent import DBAgent
 
 
 class MainStorePage:
@@ -22,7 +23,9 @@ class MainStorePage:
         current_page = 1
         # I moved url here for pagination purposes
         # qid value is simply the timestamp (it just uses unix epoch time)
-        url = f"https://www.amazon.com/s?k={search_terms}&page={current_page}&qid=1718141001&ref=sr_pg_{current_page}"
+        epoch_time = int(time.time())
+        print(27, epoch_time)
+        url = f"https://www.amazon.com/s?k={search_terms}&page={current_page}&qid={epoch_time}&ref=sr_pg_{current_page}"
         
         for retry in range(max_retries):
             try:
@@ -144,14 +147,14 @@ class MainStorePage:
         for pair in pairs:
             print(sc.get_html(pair['url']))
 
-        agent = DBAgent("mongodb://localhost:27017")
-        for pair in pairs:
-            data = {
-                'search terms': search_terms,
-                'html': sc.get_html(pair['url']),
-                'asin': pair['asin']
-            }
-            agent.WriteRaw(data)
+        # agent = DBAgent("mongodb://localhost:27017")
+        # for pair in pairs:
+        #     data = {
+        #         'search terms': search_terms,
+        #         'html': sc.get_html(pair['url']),
+        #         'asin': pair['asin']
+        #     }
+        #     agent.WriteRaw(data)
 
 
 
