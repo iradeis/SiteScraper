@@ -9,7 +9,7 @@ import time
 from PageScrap import PageScrap
 import asyncio
 
-# from DBAgent import DBAgent
+from DBAgent import DBAgent
 
 
 class MainStorePage:
@@ -147,14 +147,14 @@ class MainStorePage:
         for pair in pairs:
             print(sc.get_html(pair['url']))
 
-        # agent = DBAgent("mongodb://localhost:27017")
-        # for pair in pairs:
-        #     data = {
-        #         'search terms': search_terms,
-        #         'html': sc.get_html(pair['url']),
-        #         'asin': pair['asin']
-        #     }
-        #     agent.WriteRaw(data)
+        agent = DBAgent("mongodb://localhost:27017")
+        for pair in pairs:
+            data = {
+                'search terms': search_terms,
+                'html': sc.get_html(pair['url']),
+                'asin': pair['asin']
+            }
+            agent.WriteRaw(data)
 
 
 
