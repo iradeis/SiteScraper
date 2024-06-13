@@ -38,35 +38,47 @@ class MainStorePage:
                     exit()
 
                 soup = BeautifulSoup(response.text, "lxml")
-                # getting the very last webpage value, however sometimes pagination may not be disabled (only a few pages)
+                last_page_to_int = 1 # setting a default (there should always be one page of results)
+
                 last_page = soup.find('span', class_='s-pagination-item s-pagination-disabled')
+                if last_page != None:
+                    last_page_to_int = int(last_page.get_text(strip=True))
 
                 # PAGINATION
-                # TODO: edge case is that some search queries don't have "Next" disabled
-                if last_page:
-                    last_page_to_int = int(last_page.get_text(strip=True))
-                    while current_page < last_page_to_int:
-                        url = f"https://www.amazon.com/s?k={search_terms}&page={current_page}&qid=1718141001&ref=sr_pg_{current_page}"
-                        # scrape from each page via bs4
-                        try:
-                            soup.select_one("div[data-component-type='s-search-result']")
-                        except Exception as e:
-                            return f"Content loading error. Please try again in few minutes. Error message: {e}"
-                        
-                        products = soup.select(self.main_content)
-                        # for product in products:
-                        #     product_url = f"https://www.amazon.com{product.select_one(self.hyperlink).get('href')}"
-                        #     asin = product.get('data-asin')
-                        #     url_list.append({"url": product_url, "asin": asin})
+                # TODO: edge case scenario is that some search queries don't have "Next" disabled
+                else:
+                   max_page_without_disabled_next = 5
+                   while max_page_without_disabled_next > 0:
+                        if soup.find('a', {'aria-label': f'Go to page {max_page_without_disabled_next}'}):
+                            last_page = max_page_without_disabled_next
+                            last_page_to_int = last_page
+                            break
+                        else:
+                            print(max_page_without_disabled_next)
+                            max_page_without_disabled_next -= 1
+                
+                while current_page <= last_page_to_int:
+                    url = f"https://www.amazon.com/s?k={search_terms}&page={current_page}&qid=1718141001&ref=sr_pg_{current_page}"
+                    # scrape from each page via bs4
+                    try:
+                        soup.select_one("div[data-component-type='s-search-result']")
+                    except Exception as e:
+                        return f"Content loading error. Please try again in few minutes. Error message: {e}"
+                    
+                    products = soup.select(self.main_content)
+                    # for product in products:
+                    #     product_url = f"https://www.amazon.com{product.select_one(self.hyperlink).get('href')}"
+                    #     asin = product.get('data-asin')
+                    #     url_list.append({"url": product_url, "asin": asin})
 
-                        # USE THIS CODE SNIPPET  TO VISUALIZE PAGINATION IN EFFECT
-                        for i in range(0, min(3, len(products))):
-                            product_url = f"https://www.amazon.com{products[i].select_one(self.hyperlink).get('href')}"
-                            asin = products[i].get('data-asin')
-                            url_list.append({"url": product_url, "asin": asin})
-                            print(f"the item: {product_url} appears on page: {current_page}")
+                    # USE THIS CODE SNIPPET TO VISUALIZE PAGINATION IN EFFECT
+                    for i in range(0, min(3, len(products))):
+                        product_url = f"https://www.amazon.com{products[i].select_one(self.hyperlink).get('href')}"
+                        asin = products[i].get('data-asin')
+                        url_list.append({"url": product_url, "asin": asin})
+                        print(f"the item: {product_url} appears on page: {current_page}")
 
-                        current_page += 1
+                    current_page += 1
                         
 
                 if url_list:
@@ -126,25 +138,24 @@ class MainStorePage:
         if not pairs:  # Check if error occurred in product_urls
             print("no links found")  # Print the error message
             return
+        
         pairs = pairs[:15]
         sc = PageScrap()
         for pair in pairs:
             print(sc.get_html(pair['url']))
 
-        '''batch finishes here, implement page scroll'''
-
-        # agent = DBAgent("mongodb://localhost:27017")
-        # for pair in pairs:
-        #     data = {
-        #         'search terms': search_terms,
-        #         'html': sc.get_html(pair['url']),
-        #         'asin': pair['asin']
-        #     }
-        #     agent.WriteRaw(data)
+        agent = DBAgent("mongodb://localhost:27017")
+        for pair in pairs:
+            data = {
+                'search terms': search_terms,
+                'html': sc.get_html(pair['url']),
+                'asin': pair['asin']
+            }
+            agent.WriteRaw(data)
 
 
 
-terms = "running shoes"
+terms = "RC car hood bumper"
 store_page = MainStorePage("www.amazon.com/")
 
 
