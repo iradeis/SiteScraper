@@ -76,7 +76,7 @@ class MainStorePage:
                         product_url = f"https://www.amazon.com{products[i].select_one(self.hyperlink).get('href')}"
                         asin = products[i].get('data-asin')
                         url_list.append({"url": product_url, "asin": asin})
-                        print(f"the item: {product_url} appears on page: {current_page}")
+                        # print(f"the item: {product_url} appears on page: {current_page}")
 
                     current_page += 1
                         
