@@ -20,6 +20,8 @@ import json
 # import time
 
 # from fake_useragent import UserAgent
+from item_detailed_view_scrape import ItemDetailedViewScrape
+
 
 class PageScrap:
     def is_printable_ascii(self, char):
@@ -27,7 +29,7 @@ class PageScrap:
         return 32 <= ord(char) <= 126
     
     # takes url, returns json
-    def scrape_site(self, ASIN):
+    def scrape_site(self, url):
         
         '''
         #selenium loading 
@@ -243,13 +245,18 @@ class PageScrap:
         if description_element:
             description = description_element.text.strip()
         
+        itemDetailedViewScrape = ItemDetailedViewScrape()
+        img_result_list = []
+
+        for img in range(len(itemDetailedViewScrape.retrieve_image_url(url))):
+            img_result = requests.get(img)
+            image_b64 = base64.b64encode(img_result.content)
+            img_result_list.append(image_b64)
 
         # first image
         image_element = soup.select_one("#landingImage")
         first_image = image_element.attrs.get("src")
-
         image_result = requests.get(first_image)
-
         image_b64 = base64.b64encode(image_result.content)
 
         # convert all info to dictionary
@@ -271,6 +278,9 @@ class PageScrap:
             "rank_number": rank_number,
             "description": description,
             "first_image": image_b64.decode("utf-8")
+
+            # TODO make sure this works and adheres to the db structure u have
+            # "images": img_result_list.decode("utf-8") <-- note that this is a list
         }
 
         # convert dict to json
@@ -517,6 +527,8 @@ class PageScrap:
         image_result = requests.get(first_image)
 
         image_b64 = base64.b64encode(image_result.content)
+
+
 
         # convert all info to dictionary
         product_info = {
