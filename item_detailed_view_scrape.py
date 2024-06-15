@@ -26,11 +26,14 @@ class ItemDetailedViewScrape:
         # extract js code from the script tag
         text = script_tag.text
 
-        text = text.split("main\":")[1]
-        text = text.split(",\"variant")[0]
-        text.strip()
-        data = json.loads(text)
-        urls = list(data.keys())
+        # text = text.split("main\":")[1]
+        # text = text.split(",\"variant")[0]
+        # text.strip()
+        # data = json.loads(text)
+        # urls = list(data.keys())
+
+        segments = text.split('"hiRes":"')[1:]  # split and remove the first non-URL segment
+        urls = [segment.split('"')[0] for segment in segments]
 
         print(urls)
         return urls
