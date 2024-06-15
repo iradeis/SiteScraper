@@ -37,6 +37,12 @@ class DBAgent:
     # method read
     # input as keyword (maybe product name)
     # output dict
+    def ReadProductRaw(self, ASIN):
+        return self.productRawCollection.find_one({'asin': ASIN})
+    
+    # method read
+    # input as keyword (maybe product name)
+    # output dict
     def ReadProductInfo(self, ASIN):
         return self.productInfoCollection.find_one({'ASIN': ASIN})
 
@@ -54,14 +60,3 @@ class DBAgent:
     #   - review 2
 
 myAgent = DBAgent("mongodb://localhost:27017")
-
-json = {"url": "https://www.amazon.com/New-Balance-Running-Aluminum-Metallic/dp/B09H3N5J27/",
-        "ASIN": "B09H3P7CWQ",
-        "product_name": "New Balance Men's Fresh Foam Arishi V4 Running Shoe", 
-        "brand_name": "New Balance", "price": 69.99, "discount": 0, 
-        "rating_avg": 4.4, "total_reviews": 4088, "rating_stars": [6, 3, 7, 15, 69], 
-        "deal": True, "free_delivery": False, "free_return": False, "amazon_choice": False, 
-        "date_first_available": "October 22, 2021", "rank_number": "1525", "description": 
-        "Product details    \nCare instructions \n  \nMachine Wash \n    \nOrigin \n  \nImported \n    \nSole material \n  \nRubber \n    \nOuter material \n  \nRubber,Mesh,Suede \n    About this item   Fresh Foam midsole cushioning is precision engineered to deliver an ultra-cushioned, lightweight ride   Mesh upper with suede and knit hits   Upper features no-sew overlays for a sleek fit and feel   Textured logo and embroidered details   Durable rubber outsole   See more About this item" }
-
-myAgent.WriteProductInfo(json)
