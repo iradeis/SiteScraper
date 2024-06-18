@@ -493,8 +493,7 @@ class PageScrap:
             table = soup.find("table", id="productDetails_detailBullets_sections1")
 
             # Find the row containing "Best Sellers Rank"
-            best_sellers_row = table.find("th", string="Best Sellers Rank")
-            print(best_sellers_row)
+            best_sellers_row = table.find("th", string=lambda text: text and "Best Sellers Rank" in text)
 
             # If the row is found, extract and convert the rank text
             if best_sellers_row:
@@ -504,9 +503,10 @@ class PageScrap:
                 # Extract and strip the rank text
                 rank_text = rank_cell.find("span").text.strip().split("in")[0]
                 
+
                 # Convert the rank text to an integer (removing commas if present)
                 try:
-                    rank_text.replace("#", "")
+                    rank_text = rank_text.replace("#", "")
                     rank_number = int(rank_text.replace(",", ""))
                     print(f"Rank (as integer): {rank_number}")
                 except ValueError:
