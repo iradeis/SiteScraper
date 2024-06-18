@@ -414,7 +414,7 @@ class PageScrap:
         # limited time deal
         deal_element = soup.find("div", id="dealBadge_feature_div")
         deal = False
-        if deal_element:
+        if deal_element.get("data-csa-c-is-in-initial-active-row") != 'false':
             deal = True
 
         # data first available
