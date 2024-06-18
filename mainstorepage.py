@@ -136,8 +136,9 @@ class MainStorePage:
 
         return []
 
-    async def search(self, search_term):
-        pairs = await self.product_raws(search_term)
+    async def search(self, search_terms):
+        pairs = await self.product_raws(search_terms)
+        search_terms = search_terms.split()
         if not pairs:  # Check if error occurred in product_urls
             print("no links found")  # Print the error message
             return
@@ -148,7 +149,7 @@ class MainStorePage:
         agent = DBAgent("mongodb://localhost:27017")
         for pair in pairs:
             data = {
-                'search term': search_term,
+                'search term': search_terms,
                 'url': pair['url'],
                 'html': sc.get_html(pair['url']),
                 'asin': pair['asin']

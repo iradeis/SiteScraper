@@ -316,7 +316,7 @@ class PageScrap:
         soup = BeautifulSoup(content, "lxml")
 
         #search term inputted
-        search_term = raw_dict['search term']
+        search_terms = raw_dict['search term']
 
         # ASIN
         asin = raw_dict['asin']
@@ -473,7 +473,6 @@ class PageScrap:
                                 + " "
                                 + tokens[i + 3]
                             )
-        print(date_first_available)
 
         # rank in category
         if product_details_element:
@@ -508,7 +507,6 @@ class PageScrap:
                 try:
                     rank_text = rank_text.replace("#", "")
                     rank_number = int(rank_text.replace(",", ""))
-                    print(f"Rank (as integer): {rank_number}")
                 except ValueError:
                     print(f"Rank text could not be converted to integer: {rank_text}")
                 else:
@@ -532,7 +530,7 @@ class PageScrap:
 
         # convert all info to dictionary
         product_info = {
-            "search term": search_term,
+            "search term": search_terms,
             "url": url,
             "product_name": product_name,
             "ASIN": asin,
@@ -554,7 +552,6 @@ class PageScrap:
 
         # convert dict to json
         json_str = json.dumps(product_info)
-        print(json_str)
 
         return json_str
 
