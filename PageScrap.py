@@ -509,8 +509,6 @@ class PageScrap:
                     rank_number = int(rank_text.replace(",", ""))
                 except ValueError:
                     print(f"Rank text could not be converted to integer: {rank_text}")
-                else:
-                    print("Best Sellers Rank not found in the table.")
 
         # product description
         description_element = soup.find("div", id="productFactsDesktopExpander")
@@ -550,11 +548,42 @@ class PageScrap:
             #"first_image": image_b64.decode("utf-8")
         }
 
+        # use this line to write to database
+        #agent.WriteProductInfo(product_info)
+
         # convert dict to json
         json_str = json.dumps(product_info)
 
         return json_str
+    
+    def parse_reviews(self, url):
 
-asin = 'B098P4P8QM'
+        custom_headers = {
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+            "accept-language": "en-US,en;q=0.5",
+        }
+        # webpage request
+        response = requests.get(url, headers=custom_headers)
+        if response.status_code != 200:
+            print("Cannot access")
+            exit()
+
+        soup = BeautifulSoup(response.text, "lxml")
+        list = soup.find('div', id="cm_cr-review_list")
+
+
+        if list:
+            # Find all review elements
+            review_list = list.find_all("div", class_="a-section review aok-relative")
+            # Access individual reviews
+            for review in review_list:
+                id = review.get("id")
+
+
+# asin = 'B098P4P8QM'
+# ps = PageScrap()
+# ps.parse_html(asin)
+
 ps = PageScrap()
-ps.parse_html(asin)
+url = 'https://www.amazon.com/Treehobby-Aluminium-Anti-Collision-Protective-AX103007/product-reviews/B098P4P8QM/ref=cm_cr_dp_d_show_all_btm?reviewerType=all_reviews'
+ps.parse_reviews(url)
