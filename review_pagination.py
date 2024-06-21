@@ -12,12 +12,13 @@ headers = {
         }
 
 # reviews_url = 'https://www.amazon.com/product-reviews/B098P4P8QM/'
-reviews_url = 'https://www.amazon.com/Treehobby-Aluminium-Anti-Collision-Protective-AX103007/product-reviews/B098P4P8QM/ref=cm_cr_dp_d_show_all_btm?reviewerType=all_reviews'
+# reviews_url = 'https://www.amazon.com/Treehobby-Aluminium-Anti-Collision-Protective-AX103007/product-reviews/B098P4P8QM/ref=cm_cr_dp_d_show_all_btm?reviewerType=all_reviews'
 
 
-# USE THE BOTTOM URL TO TEST OUT THOUSANDS OF REVIEWS
-# reviews_url = 'https://www.amazon.com/product-reviews/B013KW38RQ/'
-# reviews_url = 'https://www.amazon.com/product-reviews/B0BTBQX8QS/'
+# USE THE BOTTOM URL TO TEST OUT 100+/1000+ OF REVIEWS. FOR TESTING PURPOSES
+# reviews_url = 'https://www.amazon.com/product-reviews/B013KW38RQ/' #3638 reviews
+# reviews_url = 'https://www.amazon.com/product-reviews/B0BTBQX8QS/' #140 reviews
+reviews_url = 'https://www.amazon.com/product-reviews/B0018C8LK0/' #775 reviews
 
 # Defined num of pages to scrape dynamically
 # note that each page always have 10 reviews whenever it has 10+ reviews.
@@ -58,12 +59,12 @@ def retrievePaginationHtml(url, len_page):
         response = requests.get(pageSpecificURL, headers=headers)
         soup = BeautifulSoup(response.text, 'lxml')
 
-
         soups.append(pageSpecificURL)
     return soups
 
 
 def retrieveReviewsOnPage(urls):
+    count = 0
     for url in urls:
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
@@ -73,6 +74,8 @@ def retrieveReviewsOnPage(urls):
         soup = BeautifulSoup(response.text, "lxml")
         list = soup.find('div', id="cm_cr-review_list")
 
+        listOfReviewerIDs = []
+
         if list:
             # Find all review elements
             review_list = list.find_all("div", class_="a-section review aok-relative")
@@ -80,10 +83,16 @@ def retrieveReviewsOnPage(urls):
             for review in review_list:
                 id = review.get("id")
                 print(id)
+                
+    
+ 
+
 
 len_page = findTotalNumberOfPagesToIterate(reviews_url)
 html_datas = retrievePaginationHtml(reviews_url, len_page)
 retrieveReviewsOnPage(html_datas)
+
+
 
 # print(html_datas)
 

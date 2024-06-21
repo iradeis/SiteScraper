@@ -34,8 +34,6 @@ class ItemDetailedViewScrape:
 
         segments = text.split('"hiRes":"')[1:]  # split and remove the first non-URL segment
         urls = [segment.split('"')[0] for segment in segments]
-
-        print(urls)
         return urls
 
 
