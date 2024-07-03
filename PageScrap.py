@@ -577,7 +577,19 @@ class PageScrap:
             review_list = list.find_all("div", class_="a-section review aok-relative")
             # Access individual reviews
             for review in review_list:
-                id = review.get("id")
+                #id = review.get("id")
+                title_element = review.find('a', class_="a-size-base a-link-normal review-title a-color-base review-title-content a-text-bold")
+                title_text = title_element.text.split('stars')[1].strip()
+                
+                text_element = review.find("span", class_="a-size-base review-text review-text-content")
+                review_text = text_element.text.strip()
+
+                star_element = review.find('span', class_="a-icon-alt")
+                star_text = star_element.text.strip().split()[0]
+                star = float(star_text)
+
+                date_element = review.find('span', class_="a-size-base a-color-secondary review-date")
+                date = date_element.text.strip().split('on ')[1]
 
 
 # asin = 'B098P4P8QM'

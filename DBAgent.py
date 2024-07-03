@@ -46,6 +46,12 @@ class DBAgent:
     def ReadProductInfo(self, ASIN):
         return self.productInfoCollection.find_one({'ASIN': ASIN})
 
+    def APICreation(self):
+
+
+
+        
+        return
 
     # method write product review 
     # input as dict
