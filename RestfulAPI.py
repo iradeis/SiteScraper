@@ -9,6 +9,11 @@ collection2 = db["ProductRawHTML"]
 
 app = Flask(__name__)
 
+@app.route("/", methods=["GET"])
+def index():
+    # Return a welcome message or some information about your API
+    return jsonify({"message": "Welcome to my Flask API!"})
+
 # Route to get all documents in the collection
 @app.route("/api/v1/documents", methods=["GET"])
 def get_all_documents():
