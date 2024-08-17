@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from pymongo import MongoClient
 
 # Connect to MongoDB
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient("mongodb://richard:nuclear97@59.120.52.19:27017/?authMechanism=DEFAULT")
 db = client["AmazonProductResearch"] 
 collection = db["ProductInfo"] 
 collection2 = db["ProductRawHTML"]

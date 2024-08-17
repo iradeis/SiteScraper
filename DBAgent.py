@@ -5,10 +5,10 @@ from pymongo import MongoClient
 
 class DBAgent:
 
-    def __init__(self, connectionString: str):
+    def __init__(self, connectionString: str, username, password):
         
         #format of connectionstring mongodb://localhost:27017
-        self.mongoClient = MongoClient(connectionString)
+        self.mongoClient = MongoClient(connectionString, username=username, password=password)
         self.db = self.mongoClient["AmazonProductResearch"]
         self.productRawCollection = self.db["ProductRawHTML"]
         self.productInfoCollection = self.db["ProductInfo"]
@@ -26,6 +26,27 @@ class DBAgent:
     # uses asin as id
     def WriteProductInfo(self, json):
         insert = self.productInfoCollection.insert_one(json)
+    
+    def getParsedList(self):
+        cursor = self.productInfoCollection.find({},{"ASIN": 1, "_id": 0})
+        return list(cursor)
+    
+    def getRawList(self):
+        cursor = self.productRawCollection.find({},{"ASIN": 1, "_id": 0})
+        return list(cursor)
+    
+    # method to read through ASIN
+    def IsASINExistRaw(self, ASIN):
+        filter = {'ASIN': ASIN}
+        if(self.productRawCollection.find_one(filter)):
+            return True
+        return False
+    
+    def IsASINExistParsed(self, ASIN):
+        filter = {'ASIN': ASIN}
+        if(self.productInfoCollection.find_one(filter)):
+            return True
+        return False
 
     def ReadProductInfoByPrice(self, maxPrice: float, minPrice: float):
         filter = { 
@@ -65,4 +86,4 @@ class DBAgent:
     #       - text
     #   - review 2
 
-myAgent = DBAgent("mongodb://localhost:27017")
+#agent = DBAgent("mongodb://59.120.52.19:27017", username='richard', password='nuclear97')
